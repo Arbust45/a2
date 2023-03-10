@@ -1,0 +1,119 @@
+import tkinter as tk
+import sqlite3
+
+# Nos conectamos a la base de datos (si no existe la crea)
+conexion = sqlite3.connect("base_prueba.db")
+# Creamos (si no existe) una tabla creada alumnos con sus campos
+conexion.execute("""create table if not exists contrasena(
+                    id integer primary key AUTOINCREMENT,
+                    contrasena varchar
+                    )""")
+conexion.execute("""create table if not exists usuario(
+                    id integer primary key AUTOINCREMENT,
+                    usuario varchar
+                    )""")
+conexion.close()
+conexion = sqlite3.connect("base_prueba.db")
+# Insertamos dos alumnos
+
+class MenuScreen(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.master = master
+        self.master.configure(bg="red")
+        self.master.title("mini calculadora predeterminada para suma, resta y multiplicacion de dos numeros")
+        
+        # Creamos el menú superior
+        self.menu_bar = tk.Menu(self.master)
+        self.master.config(menu=self.menu_bar)
+        self.config(bg="red")
+        
+        # Creamos las opciones del menú
+        self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.file_menu.add_command(label="Abrir archivo", command=self.open_file,background="orange")
+        self.file_menu.add_command(label="Guardar archivo", command=self.save_file,background="orange")
+        self.file_menu.add_separator(background="orange")
+        self.file_menu.add_command(label="Salir", command=self.quit_program,background="orange")
+        self.menu_bar.add_cascade(label="Archivo", menu=self.file_menu,background="orange")
+
+        self.edit_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.edit_menu.add_command(label="Copiar", command=self.copy,background="orange")
+        self.edit_menu.add_command(label="Pegar", command=self.paste,background="orange")
+        self.menu_bar.add_cascade(label="Editar", menu=self.edit_menu,background="orange")
+
+        # Agregamos algunos widgets a la pantalla
+        self.label = tk.Label(self, text="¡Buenos dias!",fg="orange" ,bg="red")
+        self.label.pack(pady=10)
+        self.button = tk.Button(self, text="Presioname", command=self.press_button,fg="red",bg="orange")
+        self.button.pack()
+        self.pack()
+
+    def open_file(self):
+        print("Abrir archivo")
+
+    def save_file(self):
+        print("Guardar archivo")
+
+    def quit_program(self):
+        self.master.quit()
+
+    def copy(self):
+        print("Copiar")
+
+    def paste(self):
+        print("Pegar")
+
+    def press_button(self):
+        x=int(input("ingresa un numero:"))
+        y=int(input("ingresa otro numero:"))
+        print("la suma de los numero es ",(x+y),"\n\nla resta de los numeros es ",(x-y),"\n\nla multiplicacion de los numero es ",(x*y))
+
+def registrarse():
+    usuario=nombre_usuario.get
+    contrasena=contrasena_usuario.get
+    conexion.execute("Insert into usuario(usuario) values(?)",(usuario))
+    conexion.execute("Insert into contrasena(contrasena) values(?)",(contrasena))
+    resultado.config(text="el registro ha sido exitoso")
+
+def iniciar_sesion():
+    usuario = nombre_usuario.get()
+    contrasena = contrasena_usuario.get()
+    usua = usuario.fetchone()
+    contra = contrasena.fetchone()
+    if usuario == usua and contrasena == contra:
+        resultado.config(text="Inicio de sesión exitoso")
+        
+        root = tk.Tk()
+        root.geometry("420x380")
+        app = MenuScreen(root)
+    else:
+        resultado.config(text="Nombre de usuario o contraseña incorrectos")
+ventana = tk.Tk()
+ventana.config(bg="lime")
+ventana.title("Inicio de sesión")
+ventana.configure(padx=50)#cambio de tamaño solo de lados
+
+# Crear campos de entrada para el nombre de usuario y la contraseña
+nombre_usuario = tk.Entry(ventana)
+nombre_usuario.config(bg="yellow")
+nombre_usuario.pack(pady=10)
+contrasena_usuario = tk.Entry(ventana, show="*")
+contrasena_usuario.config(bg="yellow")
+contrasena_usuario.pack()
+
+# Crear botones para iniciar sesión y salir
+iniciar_sesion = tk.Button(ventana, text="Iniciar sesión", command=iniciar_sesion, bg="yellow")
+iniciar_sesion.pack(padx=10, pady=10)
+registrarse=tk.Button(ventana,text="Registrarse",command=registrarse,bg="yellow")
+registrarse.pack(padx=10,pady=11)
+
+salir = tk.Button(ventana, text="Salir", command=ventana.quit)
+salir.config(bg="yellow")
+salir.pack()
+
+# Crear un widget de etiqueta para mostrar el resultado del inicio de sesión
+resultado = tk.Label(ventana, text="")
+resultado.config(bg="lime")
+resultado.pack(pady=10)
+
+ventana.mainloop()
