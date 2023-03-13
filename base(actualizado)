@@ -1,9 +1,8 @@
 import tkinter as tk
 import sqlite3
 
-# Nos conectamos a la base de datos (si no existe la crea)
 conexion = sqlite3.connect("base_prueba.db")
-# Creamos (si no existe) una tabla creada alumnos con sus campos
+
 conexion.execute("""create table if not exists contrasena(
                     id integer primary key AUTOINCREMENT,
                     contrasena varchar
@@ -14,9 +13,9 @@ conexion.execute("""create table if not exists usuario(
                     )""")
 conexion.close()
 conexion = sqlite3.connect("base_prueba.db")
-# Insertamos dos alumnos
 
 class MenuScreen(tk.Frame):
+    
     def __init__(self, master):
         super().__init__(master)
         self.master = master
@@ -45,9 +44,11 @@ class MenuScreen(tk.Frame):
         self.label = tk.Label(self, text="¡Buenos dias!",fg="orange" ,bg="red")
         self.label.pack(pady=10)
         self.button = tk.Button(self, text="Presioname", command=self.press_button,fg="red",bg="orange")
-        self.button.pack()
+        self.button.pack(pady=20)
         self.pack()
-
+        self.button2=tk.Button(self, text="prueba",command=self.press_button2,bg="orange",fg="red")
+        self.button2.pack(pady=30)
+        
     def open_file(self):
         print("Abrir archivo")
 
@@ -67,20 +68,62 @@ class MenuScreen(tk.Frame):
         x=int(input("ingresa un numero:"))
         y=int(input("ingresa otro numero:"))
         print("la suma de los numero es ",(x+y),"\n\nla resta de los numeros es ",(x-y),"\n\nla multiplicacion de los numero es ",(x*y))
+    
+
+    def press_button2(self):
+        
+        def press_button2():
+            self.master.configure(bg="red")
+            self.config(bg="red")
+            self.label.config(bg="red",fg="orange")
+            self.button.config(bg="orange",fg="red")
+            self.button2.config(bg="orange",fg="red")
+            
+        def press_button3():
+            self.master.configure(bg="purple")
+            self.config(bg="purple")
+            self.label.config(bg="purple",fg="violet")
+            self.button.config(bg="violet",fg="purple")
+            self.button2.config(bg="violet",fg="purple")
+
+        def press_button4():
+            self.master.configure(bg="blue")
+            self.config(bg="blue")
+            self.label.config(bg="blue",fg="cyan")
+            self.button.config(bg="cyan",fg="blue")
+            self.button2.config(bg="cyan",fg="blue")
+        
+        def press_button5():
+            self.master.configure(bg="green")
+            self.config(bg="green")
+            self.label.config(bg="green",fg="lime")
+            self.button.config(bg="lime",fg="green")
+            self.button2.config(bg="lime",fg="green")
+        
+        press_button2=tk.Button(self,text="defecto",command=press_button2,bg="orange",fg="red")
+        press_button2.pack()
+        press_button3=tk.Button(self, text="morado", command=press_button3, bg="violet", fg="purple")
+        press_button3.pack()
+        press_button4=tk.Button(self, text="Azul", command=press_button4, bg="cyan", fg="blue")
+        press_button4.pack()
+        press_button5=tk.Button(self,text="Verde",command=press_button5,bg="lime",fg="green")
+        press_button5.pack()
+        self.pack()
 
 def registrarse():
-    usuario=nombre_usuario.get
-    contrasena=contrasena_usuario.get
-    conexion.execute("Insert into usuario(usuario) values(?)",(usuario))
-    conexion.execute("Insert into contrasena(contrasena) values(?)",(contrasena))
+    usuario=nombre_usuario.get()
+    contrasena=contrasena_usuario.get()
+    conexion.execute("Insert into usuario(usuario) values(?)",(usuario,))
+    conexion.execute("Insert into contrasena(contrasena) values(?)",(contrasena,))
     resultado.config(text="el registro ha sido exitoso")
 
 def iniciar_sesion():
     usuario = nombre_usuario.get()
     contrasena = contrasena_usuario.get()
-    usua = usuario.fetchone()
-    contra = contrasena.fetchone()
-    if usuario == usua and contrasena == contra:
+    cursor = conexion.cursor()
+    cursor.execute("SELECT usuario, contrasena FROM usuario JOIN contrasena ON usuario.id = contrasena.id WHERE usuario.usuario = ?", (usuario,))
+    resultado_db = cursor.fetchone()
+    if resultado_db and resultado_db[1] == contrasena:
         resultado.config(text="Inicio de sesión exitoso")
         
         root = tk.Tk()
@@ -88,12 +131,12 @@ def iniciar_sesion():
         app = MenuScreen(root)
     else:
         resultado.config(text="Nombre de usuario o contraseña incorrectos")
+
 ventana = tk.Tk()
 ventana.config(bg="lime")
 ventana.title("Inicio de sesión")
-ventana.configure(padx=50)#cambio de tamaño solo de lados
+ventana.configure(padx=50)
 
-# Crear campos de entrada para el nombre de usuario y la contraseña
 nombre_usuario = tk.Entry(ventana)
 nombre_usuario.config(bg="yellow")
 nombre_usuario.pack(pady=10)
@@ -101,7 +144,6 @@ contrasena_usuario = tk.Entry(ventana, show="*")
 contrasena_usuario.config(bg="yellow")
 contrasena_usuario.pack()
 
-# Crear botones para iniciar sesión y salir
 iniciar_sesion = tk.Button(ventana, text="Iniciar sesión", command=iniciar_sesion, bg="yellow")
 iniciar_sesion.pack(padx=10, pady=10)
 registrarse=tk.Button(ventana,text="Registrarse",command=registrarse,bg="yellow")
@@ -111,7 +153,6 @@ salir = tk.Button(ventana, text="Salir", command=ventana.quit)
 salir.config(bg="yellow")
 salir.pack()
 
-# Crear un widget de etiqueta para mostrar el resultado del inicio de sesión
 resultado = tk.Label(ventana, text="")
 resultado.config(bg="lime")
 resultado.pack(pady=10)
